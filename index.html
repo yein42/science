@@ -1,47 +1,166 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>자기소개</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이예인의 과학 홈페이지</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: "맑은 고딕", sans-serif;
-            background-color: #dff6ff; /* 배경색 */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        .container {
-            background-color: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            text-align: center;
-        }
+body{
+    height:100vh;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:'맑은 고딕',sans-serif;
+    background:linear-gradient(-45deg,#020024,#090979,#00d4ff,#031d44);
+    background-size:400% 400%;
+    animation:bg 12s ease infinite;
+}
 
-        h1 {
-            color: #0077b6;
-        }
+@keyframes bg{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
 
-        p {
-            font-size: 20px;
-            color: #333;
-        }
-    </style>
+/* 별 */
+.star{
+    position:absolute;
+    width:3px;
+    height:3px;
+    background:white;
+    border-radius:50%;
+    animation:twinkle 2s infinite;
+}
+
+@keyframes twinkle{
+    0%,100%{opacity:.2;}
+    50%{opacity:1;}
+}
+
+/* 행성 */
+.planet{
+    position:absolute;
+    width:170px;
+    height:170px;
+    border-radius:50%;
+    background:radial-gradient(circle,#00ffff,#004cff,#001848);
+    top:60px;
+    right:100px;
+    box-shadow:0 0 60px cyan;
+    animation:float 5s ease-in-out infinite;
+}
+
+.planet::after{
+    content:"";
+    position:absolute;
+    width:230px;
+    height:40px;
+    border:5px solid rgba(255,255,255,.6);
+    border-radius:50%;
+    top:65px;
+    left:-30px;
+    transform:rotate(-20deg);
+}
+
+@keyframes float{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-20px);}
+}
+
+/* 제목 */
+.box{
+    text-align:center;
+    color:white;
+    z-index:10;
+    animation:show 2s;
+}
+
+.box h1{
+    font-size:75px;
+    color:#00ffff;
+    text-shadow:
+    0 0 20px cyan,
+    0 0 40px cyan,
+    0 0 80px cyan;
+}
+
+.box h2{
+    font-size:42px;
+    margin-top:20px;
+}
+
+.box p{
+    margin-top:15px;
+    font-size:30px;
+}
+
+/* 버튼 */
+button{
+    margin-top:35px;
+    padding:15px 40px;
+    font-size:22px;
+    border:none;
+    border-radius:40px;
+    cursor:pointer;
+    background:#00e5ff;
+    color:black;
+    font-weight:bold;
+    box-shadow:0 0 25px cyan;
+    transition:.3s;
+}
+
+button:hover{
+    transform:scale(1.1);
+    box-shadow:0 0 50px cyan;
+}
+
+@keyframes show{
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+</style>
+
 </head>
 <body>
 
-    <div class="container">
-        <h1>안녕하세요!</h1>
-        <p>이예인 학생입니다.</p>
-        <p>아화중학교에 다니고 있습니다.</p>
-        <p>과학시간입니다.</p>
-    </div>
+<div class="planet"></div>
+
+<div class="box">
+    <h1>🔬 과학시간! 🚀</h1>
+    <h2>안녕하세요! 이예인입니다.</h2>
+    <p>잘 부탁드립니다.</p>
+
+    <button onclick="alert('환영합니다! 😊')">
+        시작하기
+    </button>
+</div>
+
+<script>
+// 별 150개 만들기
+for(let i=0;i<150;i++){
+    let star=document.createElement("div");
+    star.className="star";
+    star.style.left=Math.random()*100+"vw";
+    star.style.top=Math.random()*100+"vh";
+    star.style.animationDuration=(Math.random()*3+1)+"s";
+    star.style.transform="scale("+(Math.random()*2+0.5)+")";
+    document.body.appendChild(star);
+}
+</script>
 
 </body>
 </html>
