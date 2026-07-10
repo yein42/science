@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>이예인의 홈페이지</title>
+<title>이예인의 과학 홈페이지</title>
 
 <style>
 *{
@@ -13,98 +13,137 @@
 }
 
 body{
-    height:100vh;
     overflow:hidden;
+    height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
     font-family:'맑은 고딕',sans-serif;
-    background:linear-gradient(135deg,#ffd6e7,#ffeaf5,#fff7fb);
+    background:linear-gradient(-45deg,#020024,#00164d,#004cff,#00d9ff);
+    background-size:400% 400%;
+    animation:bg 12s infinite;
 }
 
-/* 떠다니는 동물 */
-.animal{
+@keyframes bg{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+/* 별 */
+.star{
     position:absolute;
-    font-size:70px;
+    width:3px;
+    height:3px;
+    background:white;
+    border-radius:50%;
+    animation:twinkle 2s infinite;
+}
+
+@keyframes twinkle{
+    50%{opacity:.2;}
+}
+
+/* 행성 */
+.planet{
+    position:absolute;
+    right:120px;
+    top:70px;
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    background:radial-gradient(circle,#00ffff,#0066ff,#001b44);
+    box-shadow:0 0 60px cyan;
     animation:float 6s ease-in-out infinite;
 }
 
-.rabbit1{
-    top:10%;
-    left:8%;
-}
-
-.cat1{
-    top:15%;
-    right:10%;
-    animation-delay:1s;
-}
-
-.bear{
-    bottom:15%;
-    left:12%;
-    animation-delay:2s;
-}
-
-.dog{
-    bottom:12%;
-    right:12%;
-    animation-delay:3s;
-}
-
-@keyframes float{
-    0%,100%{
-        transform:translateY(0px);
-    }
-    50%{
-        transform:translateY(-25px);
-    }
-}
-
-/* 하트 */
-.heart{
+.planet::after{
+    content:"";
     position:absolute;
-    color:#ff69b4;
-    animation:up 8s linear infinite;
+    width:250px;
+    height:45px;
+    border:5px solid rgba(255,255,255,.5);
+    border-radius:50%;
+    top:70px;
+    left:-35px;
+    transform:rotate(-20deg);
 }
 
-@keyframes up{
+/* UFO */
+.ufo{
+    position:absolute;
+    font-size:70px;
+    top:80px;
+    left:-150px;
+    animation:fly 18s linear infinite;
+}
+
+@keyframes fly{
     from{
-        transform:translateY(100vh);
-        opacity:0;
+        left:-150px;
     }
     to{
-        transform:translateY(-120vh);
-        opacity:1;
+        left:110%;
     }
 }
 
-/* 가운데 카드 */
+/* 외계인 */
+.alien{
+    position:absolute;
+    font-size:90px;
+    left:80px;
+    bottom:70px;
+    animation:bounce 3s infinite;
+}
+
+@keyframes bounce{
+    50%{
+        transform:translateY(-20px);
+    }
+}
+
+/* 유성 */
+.shooting{
+    position:absolute;
+    color:white;
+    font-size:28px;
+    animation:meteor 4s linear infinite;
+}
+
+@keyframes meteor{
+    from{
+        transform:translate(120vw,-20vh);
+        opacity:1;
+    }
+    to{
+        transform:translate(-20vw,120vh);
+        opacity:0;
+    }
+}
+
+/* 가운데 */
 .box{
-    background:rgba(255,255,255,0.8);
-    padding:60px;
-    border-radius:30px;
     text-align:center;
-    box-shadow:0 15px 40px rgba(255,105,180,.3);
-    backdrop-filter:blur(8px);
+    color:white;
+    z-index:10;
 }
 
 h1{
-    font-size:65px;
-    color:#ff4fa0;
-    text-shadow:0 0 15px pink;
+    font-size:75px;
+    color:#00ffff;
+    text-shadow:0 0 20px cyan,
+                0 0 40px cyan,
+                0 0 80px cyan;
 }
 
 h2{
+    font-size:40px;
     margin-top:20px;
-    font-size:38px;
-    color:#444;
 }
 
 p{
     margin-top:15px;
     font-size:28px;
-    color:#666;
 }
 
 button{
@@ -112,49 +151,56 @@ button{
     padding:15px 40px;
     border:none;
     border-radius:40px;
-    background:#ff69b4;
-    color:white;
+    background:#00e5ff;
     font-size:22px;
     cursor:pointer;
-    transition:.3s;
+    font-weight:bold;
+    box-shadow:0 0 30px cyan;
 }
 
 button:hover{
     transform:scale(1.08);
-    background:#ff3d93;
 }
 </style>
 </head>
 
 <body>
 
-<div class="animal rabbit1">🐰</div>
-<div class="animal cat1">🐱</div>
-<div class="animal bear">🐻</div>
-<div class="animal dog">🐶</div>
+<div class="planet"></div>
+
+<div class="ufo">🛸</div>
+
+<div class="alien">👽</div>
 
 <div class="box">
-    <h1>🧪 과학시간! 🩷</h1>
+    <h1>🔬 과학시간! 🚀</h1>
     <h2>안녕하세요! 이예인입니다.</h2>
     <p>잘 부탁드립니다.</p>
 
-    <button onclick="alert('환영합니다! 💕')">
+    <button onclick="alert('우주 탐험을 시작합니다! 🚀')">
         시작하기
     </button>
 </div>
 
 <script>
 
-// 하트 만들기
-for(let i=0;i<40;i++){
-    let h=document.createElement("div");
-    h.className="heart";
-    h.innerHTML="💗";
-    h.style.left=Math.random()*100+"vw";
-    h.style.fontSize=(15+Math.random()*25)+"px";
-    h.style.animationDuration=(5+Math.random()*6)+"s";
-    h.style.animationDelay=Math.random()*5+"s";
-    document.body.appendChild(h);
+// 별
+for(let i=0;i<180;i++){
+    let star=document.createElement("div");
+    star.className="star";
+    star.style.left=Math.random()*100+"vw";
+    star.style.top=Math.random()*100+"vh";
+    star.style.animationDuration=(1+Math.random()*3)+"s";
+    document.body.appendChild(star);
+}
+
+// 유성
+for(let i=0;i<6;i++){
+    let s=document.createElement("div");
+    s.className="shooting";
+    s.innerHTML="☄️";
+    s.style.animationDelay=(i*2)+"s";
+    document.body.appendChild(s);
 }
 
 </script>
