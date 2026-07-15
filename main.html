@@ -248,7 +248,7 @@ nav{
                 <span class="menu-num">03</span>
                 <span class="menu-label">열</span>
             </div>
-            <div class="menu-item" data-title="물질의 상태 변화" data-desc="고체·액체·기체 사이의 변화와 그 안에 숨은 에너지의 흐름을 배웁니다." data-icon="💧">
+            <div class="menu-item" data-title="물질의 상태 변화" data-desc="고체·액체·기체 사이의 변화와 그 안에 숨은 에너지의 흐름을 배웁니다." data-icon="💧" data-link="https://sciencej1.cafe24.com/html5/changeofstate/changeofstate.html">
                 <span class="menu-num">04</span>
                 <span class="menu-label">물질의 상태 변화</span>
             </div>
@@ -305,6 +305,11 @@ function moveDot(el){
 
 items.forEach((item,idx)=>{
     item.addEventListener("click",()=>{
+        if(item.dataset.link){
+            window.location.href=item.dataset.link;
+            return;
+        }
+
         items.forEach(i=>i.classList.remove("active"));
         item.classList.add("active");
         moveDot(item);
