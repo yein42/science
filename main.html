@@ -214,6 +214,40 @@ nav{
     filter:drop-shadow(0 0 30px cyan);
 }
 
+.content-links{
+    margin-top:30px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    max-width:560px;
+}
+
+.content-link-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px 22px;
+    background:rgba(0,229,255,.08);
+    border:1px solid rgba(0,229,255,.3);
+    border-radius:12px;
+    cursor:pointer;
+    text-decoration:none;
+    color:#e6f6ff;
+    font-size:16px;
+    transition:.25s;
+}
+
+.content-link-item:hover{
+    background:rgba(0,229,255,.18);
+    border-color:var(--accent);
+    transform:translateX(4px);
+}
+
+.content-link-item .arrow{
+    color:var(--accent);
+    font-family:'Orbitron',sans-serif;
+}
+
 @media(max-width:800px){
     .layout{flex-direction:column;}
     .sidebar{width:100%;}
@@ -274,6 +308,7 @@ nav{
         <h1 class="content-title" id="contentTitle">과학과 인류의 지속가능한 삶</h1>
         <p class="content-desc" id="contentDesc">과학기술이 인류와 지구의 지속가능한 미래를 위해 어떤 역할을 하는지 살펴봅니다.</p>
         <div class="content-icon" id="contentIcon">🌍</div>
+        <div class="content-links" id="contentLinks"></div>
     </main>
 
 </div>
@@ -296,6 +331,7 @@ const eyebrow=document.querySelector(".content-eyebrow");
 const title=document.getElementById("contentTitle");
 const desc=document.getElementById("contentDesc");
 const icon=document.getElementById("contentIcon");
+const linksBox=document.getElementById("contentLinks");
 
 function moveDot(el){
     const menuRect=document.getElementById("menu").getBoundingClientRect();
@@ -303,13 +339,21 @@ function moveDot(el){
     orbitDot.style.top=(itemRect.top - menuRect.top + itemRect.height/2 - 3)+"px";
 }
 
+function renderLinks(item){
+    linksBox.innerHTML="";
+    if(item.dataset.link){
+        const a=document.createElement("a");
+        a.href=item.dataset.link;
+        a.target="_blank";
+        a.rel="noopener noreferrer";
+        a.className="content-link-item";
+        a.innerHTML="<span>"+item.dataset.title+" 학습 페이지 바로가기</span><span class='arrow'>→</span>";
+        linksBox.appendChild(a);
+    }
+}
+
 items.forEach((item,idx)=>{
     item.addEventListener("click",()=>{
-        if(item.dataset.link){
-            window.location.href=item.dataset.link;
-            return;
-        }
-
         items.forEach(i=>i.classList.remove("active"));
         item.classList.add("active");
         moveDot(item);
@@ -318,17 +362,21 @@ items.forEach((item,idx)=>{
         title.style.opacity=0;
         desc.style.opacity=0;
         icon.style.opacity=0;
+        linksBox.style.opacity=0;
 
         setTimeout(()=>{
             title.textContent=item.dataset.title;
             desc.textContent=item.dataset.desc;
             icon.textContent=item.dataset.icon;
+            renderLinks(item);
             title.style.transition="opacity .3s";
             desc.style.transition="opacity .3s";
             icon.style.transition="opacity .3s";
+            linksBox.style.transition="opacity .3s";
             title.style.opacity=1;
             desc.style.opacity=1;
             icon.style.opacity=.5;
+            linksBox.style.opacity=1;
         },150);
     });
 });
