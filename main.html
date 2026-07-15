@@ -255,6 +255,75 @@ nav{
     .content-title{font-size:34px;}
     .content-icon{display:none;}
 }
+
+/* 팝업 모달 */
+.modal-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,4,20,.75);
+    backdrop-filter:blur(4px);
+    z-index:100;
+    align-items:center;
+    justify-content:center;
+}
+
+.modal-overlay.open{
+    display:flex;
+}
+
+.modal-box{
+    width:min(90vw,900px);
+    height:min(85vh,650px);
+    background:var(--bg-mid);
+    border:1px solid rgba(0,229,255,.35);
+    border-radius:16px;
+    box-shadow:0 0 40px rgba(0,229,255,.25);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+}
+
+.modal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 20px;
+    background:rgba(0,229,255,.08);
+    border-bottom:1px solid rgba(0,229,255,.25);
+}
+
+.modal-header span{
+    font-size:15px;
+    color:#e6f6ff;
+    font-weight:bold;
+}
+
+.modal-close{
+    cursor:pointer;
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--text-soft);
+    border:1px solid rgba(255,255,255,.2);
+    transition:.2s;
+    font-size:16px;
+}
+
+.modal-close:hover{
+    color:var(--accent);
+    border-color:var(--accent);
+}
+
+.modal-box iframe{
+    flex:1;
+    width:100%;
+    border:0;
+    background:#fff;
+}
 </style>
 </head>
 
@@ -313,6 +382,16 @@ nav{
 
 </div>
 
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+        <div class="modal-header">
+            <span id="modalTitle">학습 페이지</span>
+            <div class="modal-close" id="modalClose">✕</div>
+        </div>
+        <iframe id="modalFrame" src="" title="학습 페이지"></iframe>
+    </div>
+</div>
+
 <script>
 // 별 배경
 for(let i=0;i<140;i++){
@@ -342,15 +421,38 @@ function moveDot(el){
 function renderLinks(item){
     linksBox.innerHTML="";
     if(item.dataset.link){
-        const a=document.createElement("a");
-        a.href=item.dataset.link;
-        a.target="_blank";
-        a.rel="noopener noreferrer";
+        const a=document.createElement("div");
         a.className="content-link-item";
         a.innerHTML="<span>"+item.dataset.title+" 학습 페이지 바로가기</span><span class='arrow'>→</span>";
+        a.addEventListener("click",()=>openModal(item.dataset.link,item.dataset.title));
         linksBox.appendChild(a);
     }
 }
+
+// 모달 팝업
+const modalOverlay=document.getElementById("modalOverlay");
+const modalFrame=document.getElementById("modalFrame");
+const modalTitle=document.getElementById("modalTitle");
+const modalClose=document.getElementById("modalClose");
+
+function openModal(url,titleText){
+    modalTitle.textContent=titleText+" 학습 페이지";
+    modalFrame.src=url;
+    modalOverlay.classList.add("open");
+}
+
+function closeModal(){
+    modalOverlay.classList.remove("open");
+    modalFrame.src="";
+}
+
+modalClose.addEventListener("click",closeModal);
+modalOverlay.addEventListener("click",(e)=>{
+    if(e.target===modalOverlay) closeModal();
+});
+document.addEventListener("keydown",(e)=>{
+    if(e.key==="Escape") closeModal();
+});
 
 items.forEach((item,idx)=>{
     item.addEventListener("click",()=>{
