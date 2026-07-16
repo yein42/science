@@ -486,6 +486,295 @@ items.forEach((item,idx)=>{
 // 초기 위치 설정
 window.addEventListener("load",()=>moveDot(items[0]));
 </script>
+<style>
+#chatToggle{
+    display:flex;
+    position:fixed;
+    right:22px;
+    bottom:22px;
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    background:linear-gradient(#6dd5ff,#4b7bec);
+    color:white;
+    font-size:24px;
+    align-items:center;
+    justify-content:center;
+    border:none;
+    cursor:pointer;
+    box-shadow:0 8px 16px rgba(0,0,0,.3);
+    z-index:9998;
+}
+#chatToggle:hover{
+    transform:scale(1.08);
+}
+#chatWindow{
+    display:none;
+    position:fixed;
+    right:86px;
+    bottom:22px;
+    width:320px;
+    height:440px;
+    background:white;
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 15px 35px rgba(0,0,0,.35);
+    flex-direction:column;
+    z-index:9999;
+}
+#chatHeader{
+    background:linear-gradient(#4b7bec,#3a63c8);
+    color:white;
+    padding:10px 14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    cursor:move;
+    user-select:none;
+    font-size:15px;
+    font-weight:bold;
+}
+#chatHeader button{
+    background:none;
+    border:none;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    padding:0;
+}
+#chatMessages{
+    flex:1;
+    overflow-y:auto;
+    padding:12px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    background:#f4f8fb;
+}
+.chatBubble{
+    max-width:80%;
+    padding:9px 13px;
+    border-radius:16px;
+    font-size:14px;
+    line-height:1.4;
+    word-break:break-word;
+}
+.chatBubble.me{
+    align-self:flex-end;
+    background:#ffd6e8;
+    color:#7a3b52;
+    border-bottom-right-radius:4px;
+}
+.chatBubble.system{
+    align-self:center;
+    background:#e3e3e3;
+    color:#777;
+    font-size:12px;
+    padding:6px 12px;
+}
+#chatInputRow{
+    display:flex;
+    gap:8px;
+    padding:10px;
+    border-top:1px solid #eee;
+    background:white;
+}
+#chatInput{
+    flex:1;
+    border:2px solid #eee;
+    border-radius:20px;
+    padding:9px 14px;
+    font-size:14px;
+    font-family:inherit;
+    outline:none;
+}
+#chatInput:focus{
+    border-color:#ff9dc4;
+}
+#chatSend{
+    background:#ff6fa5;
+    color:white;
+    border:none;
+    border-radius:20px;
+    padding:0 18px;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+}
+#chatSend:hover{
+    background:#e85a90;
+}
+</style>
 
+<button id="chatToggle" title="선생님과 채팅하기">💬</button>
+
+<div id="chatWindow">
+  <div id="chatHeader">
+    <span>💬 우리 반 채팅방</span>
+    <button id="chatClose" title="닫기">✕</button>
+  </div>
+
+  <div id="chatMessages">
+    <div class="chatBubble system">채팅방에 입장했어요 🙂</div>
+  </div>
+
+  <div id="chatInputRow">
+    <input id="chatInput" type="text" placeholder="메시지를 입력하세요...">
+    <button id="chatSend">전송</button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script&gt;
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script&gt;
+<script>
+// ▼ 여기 이름만 자기 이름으로 바꾸세요 (이 한 줄이 유일하게 바꿀 부분입니다)
+const STUDENT_DISPLAY_NAME = "이름";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC0r8Qz_wGGW-TUKUC7RWZ8tyHgBG3kyFk",
+  authDomain: "ahwa-science-chat.firebaseapp.com",
+  projectId: "ahwa-science-chat",
+  storageBucket: "ahwa-science-chat.firebasestorage.app",
+  messagingSenderId: "547072324299",
+  appId: "1:547072324299:web:76a9a58948f8f1251e214e"
+};
+firebase.initializeApp(firebaseConfig);
+const ahwaDb = firebase.firestore();
+</script>
+
+<script>
+const chatToggle=document.getElementById("chatToggle");
+const chatWindow=document.getElementById("chatWindow");
+const chatHeader=document.getElementById("chatHeader");
+const chatClose=document.getElementById("chatClose");
+const chatMessages=document.getElementById("chatMessages");
+const chatInput=document.getElementById("chatInput");
+const chatSend=document.getElementById("chatSend");
+
+/* 채팅창 열기/닫기 */
+chatToggle.onclick=()=>{
+  chatWindow.style.display=(chatWindow.style.display==="flex")?"none":"flex";
+  if(chatWindow.style.display==="flex"){
+    chatInput.focus();
+  }
+};
+
+chatClose.onclick=()=>{
+  chatWindow.style.display="none";
+};
+
+/* 메시지 전송 (Firestore로 실제 전송) */
+function sendChatMessage(){
+  const text=chatInput.value.trim();
+  if(text===""){
+    return;
+  }
+
+  ahwaDb.collection("messages").add({
+    sender: "student",
+    senderName: STUDENT_DISPLAY_NAME,
+    text: text,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  chatInput.value="";
+}
+
+/* Firestore 실시간 메시지 구독 (선생님/다른 학생 메시지 포함, 전체 공용 채팅방) */
+ahwaDb.collection("messages")
+  .orderBy("createdAt", "asc")
+  .onSnapshot(snapshot => {
+    chatMessages.innerHTML = "";
+
+    if(snapshot.empty){
+      const sys = document.createElement("div");
+      sys.className = "chatBubble system";
+      sys.textContent = "채팅방에 입장했어요 🙂";
+      chatMessages.appendChild(sys);
+      return;
+    }
+
+    snapshot.forEach(doc => {
+      const msg = doc.data();
+      const isTeacher = msg.sender === "teacher";
+      const isMe = !isTeacher && msg.senderName === STUDENT_DISPLAY_NAME;
+
+      const bubble = document.createElement("div");
+      bubble.className = "chatBubble" + (isMe ? " me" : "") + (isTeacher ? " system" : "");
+
+      const label = isTeacher ? "선생님: " : (isMe ? "" : (msg.senderName || "학생") + ": ");
+      bubble.textContent = label + msg.text;
+
+      chatMessages.appendChild(bubble);
+    });
+
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  });
+
+chatSend.onclick=sendChatMessage;
+
+chatInput.addEventListener("keydown",e=>{
+  if(e.key==="Enter"){
+    sendChatMessage();
+  }
+});
+
+/* 채팅창 드래그 이동 */
+let dragging=false;
+let dragOffsetX=0;
+let dragOffsetY=0;
+
+function chatDragStart(x,y){
+  dragging=true;
+  const rect=chatWindow.getBoundingClientRect();
+  dragOffsetX=x-rect.left;
+  dragOffsetY=y-rect.top;
+  chatWindow.style.right="auto";
+  chatWindow.style.bottom="auto";
+  chatWindow.style.left=rect.left+"px";
+  chatWindow.style.top=rect.top+"px";
+}
+
+function chatDragMove(x,y){
+  if(!dragging)return;
+  let newLeft=x-dragOffsetX;
+  let newTop=y-dragOffsetY;
+  newLeft=Math.max(0,Math.min(window.innerWidth-chatWindow.offsetWidth,newLeft));
+  newTop=Math.max(0,Math.min(window.innerHeight-chatWindow.offsetHeight,newTop));
+  chatWindow.style.left=newLeft+"px";
+  chatWindow.style.top=newTop+"px";
+}
+
+function chatDragEnd(){
+  dragging=false;
+}
+
+chatHeader.addEventListener("mousedown",e=>{
+  if(e.target.id==="chatClose")return;
+  chatDragStart(e.clientX,e.clientY);
+  e.preventDefault();
+});
+
+document.addEventListener("mousemove",e=>{
+  chatDragMove(e.clientX,e.clientY);
+});
+
+document.addEventListener("mouseup",chatDragEnd);
+
+chatHeader.addEventListener("touchstart",e=>{
+  if(e.target.id==="chatClose")return;
+  const t=e.touches[0];
+  chatDragStart(t.clientX,t.clientY);
+});
+
+document.addEventListener("touchmove",e=>{
+  if(dragging){
+    const t=e.touches[0];
+    chatDragMove(t.clientX,t.clientY);
+  }
+});
+
+document.addEventListener("touchend",chatDragEnd);
+</script>
 </body>
 </html>
