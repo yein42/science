@@ -17,26 +17,18 @@
 :root{
     --bg-deep:#020024;
     --bg-mid:#00164d;
-    --accent:#00e5ff;
-    --accent-dim:#0088aa;
+    --accent:#ffd700;
+    --accent-dim:#c99a2e;
     --panel:rgba(4,14,40,.55);
-    --text-soft:#bcd9e8;
+    --text-soft:#e8d9a8;
 }
 
 body{
     min-height:100vh;
     font-family:'맑은 고딕',sans-serif;
-    background:linear-gradient(-45deg,#020024,#00164d,#003a7a,#00164d);
-    background-size:400% 400%;
-    animation:bg 18s infinite;
-    color:white;
+    background:radial-gradient(ellipse at center,#0a0a0a 0%,#000000 70%);
+    color:#ffd700;
     overflow-x:hidden;
-}
-
-@keyframes bg{
-    0%{background-position:0% 50%;}
-    50%{background-position:100% 50%;}
-    100%{background-position:0% 50%;}
 }
 
 .star{
@@ -133,7 +125,7 @@ nav{
 
 .menu-label{
     font-size:16px;
-    color:#e6f6ff;
+    color:#f5e6c0;
 }
 
 .menu-item.active .menu-label{
@@ -232,7 +224,7 @@ nav{
     border-radius:12px;
     cursor:pointer;
     text-decoration:none;
-    color:#e6f6ff;
+    color:#f5e6c0;
     font-size:16px;
     transition:.25s;
 }
@@ -625,10 +617,10 @@ window.addEventListener("load",()=>moveDot(items[0]));
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script&gt;
 <script>
 // ▼ 여기 이름만 자기 이름으로 바꾸세요 (이 한 줄이 유일하게 바꿀 부분입니다)
-const STUDENT_DISPLAY_NAME = "이예인";
+const STUDENT_DISPLAY_NAME = "이름";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC0r8Qz_wGGW-TUKUC7RWZ8tyHgBG3kyFk",
